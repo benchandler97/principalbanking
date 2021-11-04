@@ -1,0 +1,23 @@
+EXEC customer_ranking_proc @loyalty_rnk_weight = 1,
+@tx_cnt_rnk_weight =1,
+@balance_rnk_weight =1,
+@goodloans_rnk_weight =1,
+@badloans_rnk_weight =1
+
+select birth_number, sum(birth_number) as total_birth_number, district_id
+from clie
+group by district_id, birth_number
+order by total_birth_number
+
+select * from customer_ranking_dist
+join disp
+on customer_ranking_dist.account_id = disp.account_id
+join client2 on disp.client_id = client2.client_id
+where rnk <= 1000
+order by rnk
+
+select district_id, [district name], region, count(district_id) as district_count
+from customer_ranking_dist
+where rnk <=1000 
+group by [district name], district_id, region
+order by district_count desc;
